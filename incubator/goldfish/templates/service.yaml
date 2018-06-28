@@ -7,6 +7,13 @@ metadata:
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+  annotations:
+    {{- if .Values.ingress.backendHTTPS -}}
+    service.alpha.kubernetes.io/app-protocols: '{"http-port-name":"HTTPS"}'
+    {{- end }}
+    {{- range $key, $value := .Values.service.annotations }}
+      {{ $key }}: {{ $value | quote }}
+    {{- end }}
 spec:
   type: {{ .Values.service.type }}
   ports:

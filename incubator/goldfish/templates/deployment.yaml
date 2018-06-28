@@ -33,10 +33,12 @@ spec:
             httpGet:
               path: /
               port: {{ .Values.service.internalPort }}
+              {{ if .Values.ingress.backendHTTPS }}scheme: HTTPS{{ end }}
           readinessProbe:
             httpGet:
               path: /
               port: {{ .Values.service.internalPort }}
+              {{ if .Values.ingress.backendHTTPS }}scheme: HTTPS{{ end }}
           env:
             - name: GOLDFISH_PORT
               value: {{ .Values.service.internalPort | quote }}
@@ -50,9 +52,20 @@ spec:
                 secretKeyRef:
                   name: {{ template "goldfish.fullname" . }}
                   key: vault-token
+        {{- if .Values.ingress.backendHTTPS }}
+          volumeMounts:
+            - name: "{{ template "goldfish.fullname" . }}-tls"
+              mountPath: /app/tls
           resources:
+        {{- end }}
 {{ toYaml .Values.resources | indent 12 }}
     {{- if .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.nodeSelector | indent 8 }}
+    {{- end }}
+    {{- if .Values.ingress.backendHTTPS }}
+      volumes:
+        - name: "{{ template "goldfish.fullname" . }}-tls"
+          secret:
+            secretName: "{{ template "goldfish.fullname" . }}-tls"
     {{- end }}

@@ -8,17 +8,19 @@ image:
   pullPolicy: IfNotPresent
 service:
   name: goldfish
-  type: ClusterIP
-  externalPort: 80
-  internalPort: 8000
+  type: NodePort
+  externalPort: 443
+  internalPort: 443
+  # annotations:
 ingress:
-  enabled: false
+  enabled: true
+  backendHTTPS: true
   # Used to create an Ingress record.
   hosts:
     - chart-example.local
   annotations:
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
   tls:
     # Secrets must be manually created in the namespace.
     # - secretName: chart-example-tls
@@ -38,8 +40,14 @@ resources: {}
 config:
   listener:
     tcp:
-      address: 0.0.0.0:8000
-      tls_disable: 1
+      address: 0.0.0.0:443
+      tls_disable: 0
+  # Must be set if using ingress.backendHTTPS
+  # Place the files at the same level of values.yaml
+  #    certificate:
+  #      local:
+  #        cert_file: "/app/tls/goldfish-certificate.cert"
+  #        key_file: "/app/tls/goldfish-key.pem"
   vault:
     address: http://vault:8200
     tls_skip_verify: 1

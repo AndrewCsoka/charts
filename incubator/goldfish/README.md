@@ -39,6 +39,7 @@ helm install -n goldfish .
 | `service.externalPort` | external port                     | `80`                       |
 | `service.internalPort` | pod-listened port                 | `8000`                     |
 | `ingress.enabled`      | Enable ingress usage              | `false`                    |
+| `ingress.backendHTTPS` | Enable backend HTTPS              | `false`                    |
 | `ingress.hosts`        | service hostname                  | `chart-example.local`      |
 | `config.*`             | variables to generate config file | see `values.yaml`          |
 | `secrets.*`            | variables to be created as `ENV`  | see `values.yaml`          |
